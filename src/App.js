@@ -12,12 +12,15 @@ import "./App.css";
 class App extends Component {
   state = {
     todos: [],
+    loading: true,
   };
 
   componentDidMount() {
     axios
-      .get("https://jsonplaceholder.typicode.com/todos?_limit=5&completed=false")
-      .then((res) => this.setState({ todos: res.data }));
+      .get(
+        "https://jsonplaceholder.typicode.com/todos?_limit=5&completed=false"
+      )
+      .then((res) => this.setState({ todos: res.data, loading: false }));
   }
 
   // Toggle todo complete
@@ -54,6 +57,11 @@ class App extends Component {
   };
 
   render() {
+    const { loading } = this.state;
+
+    if (loading) {
+      return null;
+    }
     return (
       <Router>
         <div className="App">
@@ -65,11 +73,21 @@ class App extends Component {
               render={(props) => (
                 <>
                   <AddTodo addTodo={this.addTodo} />
-                  <Todos
-                    todos={this.state.todos}
-                    markComplete={this.markComplete}
-                    delTodo={this.delTodo}
-                  />
+                  {this.state.todos.length ? (
+                    <Todos
+                      todos={this.state.todos}
+                      markComplete={this.markComplete}
+                      delTodo={this.delTodo}
+                    />
+                  ) : (
+                    <>
+                      <h1 style={{ marginTop: "2rem" }}>All done!</h1>
+                      <p>
+                        Now it's time to enjoy a beverage{" "}
+                        <span style={{ fontSize: "2rem" }}>🍻</span>.
+                      </p>
+                    </>
+                  )}
                 </>
               )}
             />
